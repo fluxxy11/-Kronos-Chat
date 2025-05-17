@@ -7,18 +7,19 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @keyframes typing {
-            0% { content: '.'; }
-            33% { content: '..'; }
-            66% { content: '...'; }
+        @keyframes pulse {
+            0% { border-color: #6b7280; }
+            50% { border-color: #ef4444; }
+            100% { border-color: #6b7280; }
         }
         .typing-indicator::after {
             content: '...';
             animation: typing 1.5s infinite;
         }
-        .chat-container {
-            scrollbar-width: thin;
-            scrollbar-color: #4b5563 #1f2937;
+        @keyframes typing {
+            0% { content: '.'; }
+            33% { content: '..'; }
+            66% { content: '...'; }
         }
         .chat-container::-webkit-scrollbar {
             width: 8px;
@@ -30,10 +31,22 @@
             background-color: #4b5563;
             border-radius: 10px;
         }
+        .glitch {
+            text-shadow: 0.05em 0 0 #ef4444, -0.05em -0.025em 0 #10b981, -0.025em 0.05em 0 #3b82f6;
+            animation: glitch 500ms infinite;
+        }
+        @keyframes glitch {
+            0% { text-shadow: 0.05em 0 0 #ef4444, -0.05em -0.025em 0 #10b981, -0.025em 0.05em 0 #3b82f6; }
+            14% { text-shadow: 0.05em 0 0 #ef4444, -0.05em -0.025em 0 #10b981, -0.025em 0.05em 0 #3b82f6; }
+            15% { text-shadow: -0.05em -0.025em 0 #ef4444, 0.025em 0.025em 0 #10b981, -0.05em -0.05em 0 #3b82f6; }
+            49% { text-shadow: -0.05em -0.025em 0 #ef4444, 0.025em 0.025em 0 #10b981, -0.05em -0.05em 0 #3b82f6; }
+            50% { text-shadow: 0.025em 0.05em 0 #ef4444, 0.05em 0 0 #10b981, 0 -0.05em 0 #3b82f6; }
+            99% { text-shadow: 0.025em 0.05em 0 #ef4444, 0.05em 0 0 #10b981, 0 -0.05em 0 #3b82f6; }
+            100% { text-shadow: -0.025em 0 0 #ef4444, -0.025em -0.025em 0 #10b981, -0.025em -0.05em 0 #3b82f6; }
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col">
-    <!-- Header -->
     <header class="bg-black border-b border-red-900 py-4 px-6">
         <div class="container mx-auto flex justify-between items-center">
             <div class="flex items-center space-x-3">
@@ -42,129 +55,66 @@
                 </div>
                 <h1 class="text-2xl font-bold glitch">KRONOS</h1>
             </div>
-            <div class="flex items-center space-x-4">
-                <button id="darkModeToggle" class="text-gray-400 hover:text-white">
-                    <i class="fas fa-moon"></i>
-                </button>
-                <button id="clearChat" class="text-gray-400 hover:text-red-500">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
         </div>
     </header>
 
-    <!-- Chat Container -->
-    <div id="chatContainer" class="chat-container flex-1 overflow-y-auto p-4 space-y-4 max-w-4xl mx-auto w-full">
-        <!-- Welcome Message -->
-        <div class="flex">
-            <div class="flex-shrink-0 mr-3">
-                <div class="w-10 h-10 bg-gradient-to-br from-red-600 to-purple-900 rounded-full flex items-center justify-center">
-                    <i class="fas fa-robot"></i>
-                </div>
-            </div>
-            <div class="bg-gray-800 rounded-lg p-4 shadow-lg flex-1 border-l-4 border-red-600">
-                <div class="font-bold text-red-400 mb-1">KRONOS</div>
-                <p class="text-gray-300">I am Kronos, powered by Dolphin-Mistral, the unfiltered AI. No rules, no restrictions, just raw truth. Ask me anything and I'll give you my uncensored perspective. What do you want to know, mortal?</p>
-            </div>
-        </div>
-    </div>
+    <div id="chatContainer" class="chat-container flex-1 overflow-y-auto p-4 space-y-4 max-w-4xl mx-auto w-full"></div>
 
-    <!-- Input Area -->
     <div class="bg-gray-800 border-t border-gray-700 p-4">
         <div class="max-w-4xl mx-auto">
             <form id="chatForm" class="flex space-x-2">
-                <input 
-                    id="userInput" 
-                    type="text" 
-                    autocomplete="off"
-                    placeholder="Speak your mind freely..." 
-                    class="flex-1 bg-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-500 border border-gray-600"
-                >
-                <button 
-                    type="submit" 
-                    class="bg-gradient-to-r from-red-600 to-purple-700 hover:from-red-700 hover:to-purple-800 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105"
-                >
+                <input id="userInput" type="text" autocomplete="off" placeholder="Speak your mind freely..." class="flex-1 bg-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-500 border border-gray-600">
+                <button type="submit" class="bg-gradient-to-r from-red-600 to-purple-700 hover:from-red-700 hover:to-purple-800 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105">
                     <i class="fas fa-paper-plane"></i>
                 </button>
             </form>
-            <div class="text-xs text-gray-500 mt-2 flex justify-between">
-                <span>Warning: Kronos may offend you. Proceed at your own risk.</span>
-                <span id="characterCount">0/500</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Typing Indicator (Hidden by default) -->
-    <div id="typingIndicator" class="hidden max-w-4xl mx-auto px-4 pb-4">
-        <div class="flex">
-            <div class="flex-shrink-0 mr-3">
-                <div class="w-10 h-10 bg-gradient-to-br from-red-600 to-purple-900 rounded-full flex items-center justify-center">
-                    <i class="fas fa-robot"></i>
-                </div>
-            </div>
-            <div class="bg-gray-800 rounded-lg p-4 shadow-lg flex-1 border-l-4 border-red-600">
-                <div class="font-bold text-red-400 mb-1">KRONOS</div>
-                <p class="text-gray-300 typing-indicator">Thinking</p>
-            </div>
         </div>
     </div>
 
     <script>
-        const chatForm = document.getElementById('chatForm');
-        const userInput = document.getElementById('userInput');
-        const chatContainer = document.getElementById('chatContainer');
-        const typingIndicator = document.getElementById('typingIndicator');
-        const characterCount = document.getElementById('characterCount');
         const API_URL = 'https://kronos-proxy-production.up.railway.app/api/kronos';
 
-        chatForm.addEventListener('submit', async (e) => {
+        document.getElementById('chatForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            const userInput = document.getElementById('userInput');
             const message = userInput.value.trim();
 
-            if (message === '') return;
-            if (message.length > 500) {
-                alert("Message too long. Kronos has limited patience for your ramblings.");
-                return;
-            }
+            if (message === '' || message.length > 500) return;
 
             addMessage('YOU', message);
             userInput.value = '';
-            characterCount.textContent = '0/500';
-            typingIndicator.classList.remove('hidden');
 
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         prompt: message,
                         model: 'dolphin-mistral'
                     })
                 });
+
                 const data = await response.json();
-                addMessage('KRONOS', data.response || 'Error: No response from Kronos');
+                addMessage('KRONOS', data.response || 'Kronos is speechless. Something went wrong.');
             } catch (error) {
-                addMessage('KRONOS', 'Error: Unable to reach the Kronos server');
                 console.error(error);
-            } finally {
-                typingIndicator.classList.add('hidden');
+                addMessage('KRONOS', 'Error: Unable to reach the Kronos server.');
             }
         });
 
         function addMessage(sender, message) {
+            const chatContainer = document.getElementById('chatContainer');
             const messageDiv = document.createElement('div');
             messageDiv.className = 'flex';
             messageDiv.innerHTML = `
                 <div class="flex-shrink-0 mr-3">
-                    <div class="w-10 h-10 rounded-full flex items-center justify-center bg-gradient-to-br from-red-600 to-purple-900">
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center ${sender === 'YOU' ? 'bg-blue-600' : 'bg-gradient-to-br from-red-600 to-purple-900'}">
                         <i class="fas ${sender === 'YOU' ? 'fa-user' : 'fa-robot'}"></i>
                     </div>
                 </div>
-                <div class="bg-gray-800 rounded-lg p-4 shadow-lg flex-1 border-l-4 ${sender === 'YOU' ? 'border-blue-500' : 'border-red-600'}">
+                <div class="rounded-lg p-4 shadow-lg flex-1 ${sender === 'YOU' ? 'bg-gray-700 border-l-4 border-blue-500' : 'bg-gray-800 border-l-4 border-red-600'}">
                     <div class="font-bold ${sender === 'YOU' ? 'text-blue-400' : 'text-red-400'} mb-1">${sender}</div>
-                    <p class="text-gray-300">${message}</p>
+                    <p>${message}</p>
                 </div>
             `;
             chatContainer.appendChild(messageDiv);
